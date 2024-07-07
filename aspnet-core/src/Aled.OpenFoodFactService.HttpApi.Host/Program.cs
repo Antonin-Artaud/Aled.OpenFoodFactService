@@ -8,7 +8,7 @@ using Serilog.Events;
 
 namespace Aled.OpenFoodFactService;
 
-public class Program
+public static class Program
 {
     public static async Task<int> Main(string[] args)
     {

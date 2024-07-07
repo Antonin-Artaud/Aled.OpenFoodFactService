@@ -5,5 +5,5 @@ namespace Aled.OpenFoodFactService;
 
 public interface IHealthCheckAppService : IApplicationService
 {
-    Task<string> CheckAsync();
+    Task<string> GetStatusAsync();
 }
