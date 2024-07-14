@@ -18,7 +18,6 @@
     "Aled.OpenFoodFactService.HttpApi.Host": {
       "commandName": "Project",
       "launchBrowser": false,
-      "applicationUrl": "https://192.0.0.2:44305",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }

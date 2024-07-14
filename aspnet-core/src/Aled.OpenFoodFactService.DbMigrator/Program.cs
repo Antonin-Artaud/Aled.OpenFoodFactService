@@ -1,4 +1,6 @@
+using System;
 using System.Threading.Tasks;
+using DotNetEnv;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -33,6 +35,24 @@ internal class Program
         return Host.CreateDefaultBuilder(args)
             .AddAppSettingsSecretsJson()
             .ConfigureLogging((context, logging) => logging.ClearProviders())
-            .ConfigureServices((hostContext, services) => { services.AddHostedService<DbMigratorHostedService>(); });
+            .ConfigureServices((hostContext, services) =>
+            {
+                if (hostContext.HostingEnvironment.IsDevelopment())
+                {
+                    Env.Load();
+
+                    var openIddictAppRootUrl =
+                        Env.GetString("API_HOST_URL");
+
+                    if (string.IsNullOrEmpty(openIddictAppRootUrl))
+                    {
+                        throw new Exception($"ConfigurationError: an error occured on API_HOST_URL env key. Ensure the .env file is correctly configured and placed in the root directory.");
+                    }
+                    
+                    hostContext.Configuration["OpenIddict:Applications:OpenFoodFactService_Swagger:RootUrl"] = openIddictAppRootUrl;
+                }
+                
+                services.AddHostedService<DbMigratorHostedService>();
+            });
     }
 }
