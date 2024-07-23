@@ -20,6 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="DotNetEnv" Version="3.0.0" />
     <PackageReference Include="Volo.Abp.Http.Client.IdentityModel" Version="8.1.1" />
     <PackageReference Include="Volo.Abp.Autofac" Version="8.1.1" />
     <ProjectReference Include="..\..\src\Aled.OpenFoodFactService.HttpApi.Client\Aled.OpenFoodFactService.HttpApi.Client.csproj" />
