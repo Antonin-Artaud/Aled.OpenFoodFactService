@@ -1,4 +1,4 @@
-using Aled.OpenFoodFactService.MongoDb;
+using Aled.OpenFoodFactService.MongoDB;
 using Volo.Abp.Autofac;
 using Volo.Abp.Caching;
 using Volo.Abp.Caching.StackExchangeRedis;
@@ -11,7 +11,7 @@ namespace Aled.OpenFoodFactService.DbMigrator;
     typeof(AbpCachingStackExchangeRedisModule),
     typeof(OpenFoodFactServiceMongoDbModule),
     typeof(OpenFoodFactServiceApplicationContractsModule)
-)]
+    )]
 public class OpenFoodFactServiceDbMigratorModule : AbpModule
 {
     public override void ConfigureServices(ServiceConfigurationContext context)

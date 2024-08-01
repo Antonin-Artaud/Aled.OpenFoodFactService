@@ -1,5 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -13,64 +17,34 @@ namespace Aled.OpenFoodFactService.Data;
 
 public class OpenFoodFactServiceDbMigrationService : ITransientDependency
 {
-    private readonly ICurrentTenant _currentTenant;
+    public ILogger<OpenFoodFactServiceDbMigrationService> Logger { get; set; }
 
     private readonly IDataSeeder _dataSeeder;
     private readonly IEnumerable<IOpenFoodFactServiceDbSchemaMigrator> _dbSchemaMigrators;
-    private readonly ITenantRepository _tenantRepository;
+    private readonly ICurrentTenant _currentTenant;
 
     public OpenFoodFactServiceDbMigrationService(
         IDataSeeder dataSeeder,
         IEnumerable<IOpenFoodFactServiceDbSchemaMigrator> dbSchemaMigrators,
-        ITenantRepository tenantRepository,
         ICurrentTenant currentTenant)
     {
         _dataSeeder = dataSeeder;
         _dbSchemaMigrators = dbSchemaMigrators;
-        _tenantRepository = tenantRepository;
         _currentTenant = currentTenant;
 
         Logger = NullLogger<OpenFoodFactServiceDbMigrationService>.Instance;
     }
 
-    public ILogger<OpenFoodFactServiceDbMigrationService> Logger { get; set; }
-
     public async Task MigrateAsync()
     {
+
         Logger.LogInformation("Started database migrations...");
 
         await MigrateDatabaseSchemaAsync();
         await SeedDataAsync();
 
-        Logger.LogInformation("Successfully completed host database migrations.");
-
-        var tenants = await _tenantRepository.GetListAsync(includeDetails: true);
-
-        var migratedDatabaseSchemas = new HashSet<string>();
-        foreach (var tenant in tenants)
-        {
-            using (_currentTenant.Change(tenant.Id))
-            {
-                if (tenant.ConnectionStrings.Any())
-                {
-                    var tenantConnectionStrings = tenant.ConnectionStrings
-                        .Select(x => x.Value)
-                        .ToList();
-
-                    if (!migratedDatabaseSchemas.IsSupersetOf(tenantConnectionStrings))
-                    {
-                        await MigrateDatabaseSchemaAsync(tenant);
-
-                        migratedDatabaseSchemas.AddIfNotContains(tenantConnectionStrings);
-                    }
-                }
-
-                await SeedDataAsync(tenant);
-            }
-
-            Logger.LogInformation($"Successfully completed {tenant.Name} tenant database migrations.");
-        }
-
+        Logger.LogInformation($"Successfully completed host database migrations.");
+        
         Logger.LogInformation("Successfully completed all database migrations.");
         Logger.LogInformation("You can safely end this process...");
     }
@@ -91,10 +65,9 @@ public class OpenFoodFactServiceDbMigrationService : ITransientDependency
         Logger.LogInformation($"Executing {(tenant == null ? "host" : tenant.Name + " tenant")} database seed...");
 
         await _dataSeeder.SeedAsync(new DataSeedContext(tenant?.Id)
-            .WithProperty(IdentityDataSeedContributor.AdminEmailPropertyName,
-                IdentityDataSeedContributor.AdminEmailDefaultValue)
-            .WithProperty(IdentityDataSeedContributor.AdminPasswordPropertyName,
-                IdentityDataSeedContributor.AdminPasswordDefaultValue)
+            .WithProperty(IdentityDataSeedContributor.AdminEmailPropertyName, IdentityDataSeedContributor.AdminEmailDefaultValue)
+            .WithProperty(IdentityDataSeedContributor.AdminPasswordPropertyName, IdentityDataSeedContributor.AdminPasswordDefaultValue)
         );
     }
+
 }

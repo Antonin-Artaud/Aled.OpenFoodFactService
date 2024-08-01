@@ -2,13 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
-using Aled.OpenFoodFactService.BackgroundServices;
-using Aled.OpenFoodFactService.MongoDb;
-using Aled.OpenFoodFactService.MultiTenancy;
-using Hangfire;
 using Medallion.Threading;
 using Medallion.Threading.Redis;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -19,22 +12,25 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
+using Aled.OpenFoodFactService.MongoDB;
 using StackExchange.Redis;
+using Microsoft.OpenApi.Models;
+using Pages.Abp.MultiTenancy;
 using Volo.Abp;
-using Volo.Abp.AspNetCore.Auditing;
+using Volo.Abp.Account;
 using Volo.Abp.AspNetCore.Mvc;
-using Volo.Abp.AspNetCore.Mvc.UI.MultiTenancy;
+using Volo.Abp.AspNetCore.Mvc.ApplicationConfigurations;
 using Volo.Abp.AspNetCore.Serilog;
 using Volo.Abp.Autofac;
-using Volo.Abp.BackgroundJobs.Hangfire;
 using Volo.Abp.Caching;
 using Volo.Abp.Caching.StackExchangeRedis;
 using Volo.Abp.DistributedLocking;
+using Volo.Abp.Identity;
 using Volo.Abp.Modularity;
 using Volo.Abp.Security.Claims;
+using Volo.Abp.SettingManagement;
 using Volo.Abp.Swashbuckle;
+using Volo.Abp.TenantManagement;
 using Volo.Abp.VirtualFileSystem;
 
 namespace Aled.OpenFoodFactService;
@@ -44,12 +40,10 @@ namespace Aled.OpenFoodFactService;
     typeof(AbpAutofacModule),
     typeof(AbpCachingStackExchangeRedisModule),
     typeof(AbpDistributedLockingModule),
-    typeof(AbpAspNetCoreMvcUiMultiTenancyModule),
     typeof(OpenFoodFactServiceApplicationModule),
     typeof(OpenFoodFactServiceMongoDbModule),
     typeof(AbpAspNetCoreSerilogModule),
-    typeof(AbpSwashbuckleModule),
-    typeof(AbpBackgroundJobsHangfireModule)
+    typeof(AbpSwashbuckleModule)
 )]
 public class OpenFoodFactServiceHttpApiHostModule : AbpModule
 {
@@ -66,30 +60,6 @@ public class OpenFoodFactServiceHttpApiHostModule : AbpModule
         ConfigureDistributedLocking(context, configuration);
         ConfigureCors(context, configuration);
         ConfigureSwaggerServices(context, configuration);
-        ConfigureHealthChecks(context);
-        ConfigureHangfire(context, configuration);
-        ConfigureHangfireAuditing();
-    }
-
-    private void ConfigureHangfireAuditing()
-    {
-        Configure<AbpAspNetCoreAuditingOptions>(options =>
-        {
-            options.IgnoredUrls.Add("/hangfire/stats");
-        });
-    }
-    
-    private void ConfigureHangfire(ServiceConfigurationContext context, IConfiguration configuration)
-    {
-        context.Services.AddHangfire(config =>
-        {
-            config.UseSqlServerStorage(configuration.GetConnectionString("Hangfire"));
-        });
-    }
-
-    private void ConfigureHealthChecks(ServiceConfigurationContext context)
-    {
-        context.Services.AddHealthChecks();
     }
 
     private void ConfigureCache(IConfiguration configuration)
@@ -126,6 +96,18 @@ public class OpenFoodFactServiceHttpApiHostModule : AbpModule
         Configure<AbpAspNetCoreMvcOptions>(options =>
         {
             options.ConventionalControllers.Create(typeof(OpenFoodFactServiceApplicationModule).Assembly);
+            options.ControllersToRemove.Add(typeof(AbpApplicationConfigurationController));
+            options.ControllersToRemove.Add(typeof(AbpApplicationLocalizationController));
+            options.ControllersToRemove.Add(typeof(AbpTenantController));
+            options.ControllersToRemove.Add(typeof(AccountController));
+            options.ControllersToRemove.Add(typeof(DynamicClaimsController));
+            options.ControllersToRemove.Add(typeof(EmailSettingsController));
+            options.ControllersToRemove.Add(typeof(ProfileController));
+            options.ControllersToRemove.Add(typeof(IdentityRoleController));
+            options.ControllersToRemove.Add(typeof(IdentityUserController));
+            options.ControllersToRemove.Add(typeof(TenantController));
+            options.ControllersToRemove.Add(typeof(TimeZoneSettingsController));
+            options.ControllersToRemove.Add(typeof(IdentityUserLookupController));
         });
     }
 
@@ -139,7 +121,6 @@ public class OpenFoodFactServiceHttpApiHostModule : AbpModule
                 options.Audience = "Aled";
             });
 
-
         context.Services.Configure<AbpClaimsPrincipalFactoryOptions>(options =>
         {
             options.IsDynamicClaimsEnabled = true;
@@ -152,7 +133,7 @@ public class OpenFoodFactServiceHttpApiHostModule : AbpModule
             configuration["AuthServer:Authority"]!,
             new Dictionary<string, string>
             {
-                { "Aled_OpenFoodFactScope", "Aled API" }
+                    {"Aled_OpenFoodFactService", "OpenFoodFactService API"}
             },
             options =>
             {
@@ -223,11 +204,6 @@ public class OpenFoodFactServiceHttpApiHostModule : AbpModule
         app.UseCors();
         app.UseAuthentication();
 
-        if (MultiTenancyConsts.IsEnabled)
-        {
-            app.UseMultiTenancy();
-        }
-
         app.UseUnitOfWork();
         app.UseDynamicClaims();
         app.UseAuthorization();
@@ -239,23 +215,11 @@ public class OpenFoodFactServiceHttpApiHostModule : AbpModule
 
             var configuration = context.GetConfiguration();
             options.OAuthClientId(configuration["AuthServer:SwaggerClientId"]);
-            options.OAuthScopes("Aled_OpenFoodFactScope");
+            options.OAuthScopes("Aled_OpenFoodFactService");
         });
 
-        app.UseHealthChecks("/health");
         app.UseAuditing();
         app.UseAbpSerilogEnrichers();
-        app.UseHangfireDashboard();
         app.UseConfiguredEndpoints();
-        
-        InitializeRecurringJobs();
-    }
-    
-    private static void InitializeRecurringJobs()
-    {
-        RecurringJob.AddOrUpdate<IUpdatingDatabaseManager>(
-            "Updating OpenFoodFact data",
-            manager => manager.UpdateDatabaseAsync(DateTime.Now),
-            Cron.Daily);
     }
 }
