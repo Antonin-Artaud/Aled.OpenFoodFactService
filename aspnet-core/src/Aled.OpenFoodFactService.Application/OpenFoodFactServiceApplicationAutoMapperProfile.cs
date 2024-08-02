@@ -9,5 +9,6 @@ public class OpenFoodFactServiceApplicationAutoMapperProfile : Profile
     public OpenFoodFactServiceApplicationAutoMapperProfile()
     {
         CreateMap<Product, ProductDto>();
+        CreateMap<ProductDetails, ProductDetailsDto>();
     }
 }

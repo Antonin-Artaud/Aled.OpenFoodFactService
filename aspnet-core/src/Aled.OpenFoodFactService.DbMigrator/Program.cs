@@ -1,6 +1,6 @@
-using System.IO;
+using System;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
+using DotNetEnv;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -9,20 +9,20 @@ using Serilog.Events;
 
 namespace Aled.OpenFoodFactService.DbMigrator;
 
-class Program
+internal class Program
 {
-    static async Task Main(string[] args)
+    private static async Task Main(string[] args)
     {
         Log.Logger = new LoggerConfiguration()
             .MinimumLevel.Information()
             .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
             .MinimumLevel.Override("Volo.Abp", LogEventLevel.Warning)
 #if DEBUG
-                .MinimumLevel.Override("Aled.OpenFoodFactService", LogEventLevel.Debug)
+            .MinimumLevel.Override("Aled.OpenFoodFactService", LogEventLevel.Debug)
 #else
                 .MinimumLevel.Override("Aled.OpenFoodFactService", LogEventLevel.Information)
 #endif
-                .Enrich.FromLogContext()
+            .Enrich.FromLogContext()
             .WriteTo.Async(c => c.File("Logs/logs.txt"))
             .WriteTo.Async(c => c.Console())
             .CreateLogger();
@@ -30,12 +30,31 @@ class Program
         await CreateHostBuilder(args).RunConsoleAsync();
     }
 
-    public static IHostBuilder CreateHostBuilder(string[] args) =>
-        Host.CreateDefaultBuilder(args)
+    public static IHostBuilder CreateHostBuilder(string[] args)
+    {
+        return Host.CreateDefaultBuilder(args)
             .AddAppSettingsSecretsJson()
             .ConfigureLogging((context, logging) => logging.ClearProviders())
             .ConfigureServices((hostContext, services) =>
             {
+                if (hostContext.HostingEnvironment.IsDevelopment())
+                {
+                    Env.Load();
+
+                    var openIddictAppRootUrl =
+                        Env.GetString("API_HOST_URL");
+
+                    if (string.IsNullOrEmpty(openIddictAppRootUrl))
+                    {
+                        throw new Exception(
+                            "ConfigurationError: an error occured on API_HOST_URL env key. Ensure the .env file is correctly configured and placed in the root directory.");
+                    }
+
+                    hostContext.Configuration["OpenIddict:Applications:OpenFoodFactService_Swagger:RootUrl"] =
+                        openIddictAppRootUrl;
+                }
+
                 services.AddHostedService<DbMigratorHostedService>();
             });
+    }
 }

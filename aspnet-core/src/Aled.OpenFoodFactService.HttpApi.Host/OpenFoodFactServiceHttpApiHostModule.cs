@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Aled.OpenFoodFactService.MongoDB;
 using Medallion.Threading;
 using Medallion.Threading.Redis;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -12,9 +13,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Aled.OpenFoodFactService.MongoDB;
-using StackExchange.Redis;
 using Microsoft.OpenApi.Models;
+using StackExchange.Redis;
 using Pages.Abp.MultiTenancy;
 using Volo.Abp;
 using Volo.Abp.Account;
@@ -121,6 +121,7 @@ public class OpenFoodFactServiceHttpApiHostModule : AbpModule
                 options.Audience = "Aled";
             });
 
+
         context.Services.Configure<AbpClaimsPrincipalFactoryOptions>(options =>
         {
             options.IsDynamicClaimsEnabled = true;
@@ -133,7 +134,7 @@ public class OpenFoodFactServiceHttpApiHostModule : AbpModule
             configuration["AuthServer:Authority"]!,
             new Dictionary<string, string>
             {
-                    {"Aled_OpenFoodFactService", "OpenFoodFactService API"}
+                { "Aled_OpenFoodFactScope", "Aled API" }
             },
             options =>
             {
@@ -215,7 +216,7 @@ public class OpenFoodFactServiceHttpApiHostModule : AbpModule
 
             var configuration = context.GetConfiguration();
             options.OAuthClientId(configuration["AuthServer:SwaggerClientId"]);
-            options.OAuthScopes("Aled_OpenFoodFactService");
+            options.OAuthScopes("Aled_OpenFoodFactScope");
         });
 
         app.UseAuditing();
