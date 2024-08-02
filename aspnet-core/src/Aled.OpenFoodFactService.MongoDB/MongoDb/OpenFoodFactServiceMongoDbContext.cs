@@ -1,22 +1,22 @@
-﻿using Volo.Abp.Data;
+﻿using Aled.OpenFoodFactService.Entities.Products;
+using MongoDB.Driver;
+using Volo.Abp.Data;
 using Volo.Abp.MongoDB;
 
-namespace Aled.OpenFoodFactService.MongoDb;
+namespace Aled.OpenFoodFactService.MongoDB;
 
 [ConnectionStringName("Default")]
 public class OpenFoodFactServiceMongoDbContext : AbpMongoDbContext
 {
-    /* Add mongo collections here. Example:
-     * public IMongoCollection<Question> Questions => Collection<Question>();
-     */
-
+    public IMongoCollection<Product> Products => Collection<Product>();
+    
     protected override void CreateModel(IMongoModelBuilder modelBuilder)
     {
         base.CreateModel(modelBuilder);
-
-        //modelBuilder.Entity<YourEntity>(b =>
-        //{
-        //    //...
-        //});
+        
+        modelBuilder.Entity<Product>(e =>
+        {
+            e.CollectionName = $"{OpenFoodFactServiceConsts.DbTablePrefix}{nameof(Products)}";
+        });
     }
 }

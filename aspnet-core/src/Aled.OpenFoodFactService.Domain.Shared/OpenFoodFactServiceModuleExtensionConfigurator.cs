@@ -1,10 +1,13 @@
-﻿using Volo.Abp.Threading;
+﻿using System.ComponentModel.DataAnnotations;
+using Volo.Abp.Identity;
+using Volo.Abp.ObjectExtending;
+using Volo.Abp.Threading;
 
 namespace Aled.OpenFoodFactService;
 
 public static class OpenFoodFactServiceModuleExtensionConfigurator
 {
-    private static readonly OneTimeRunner OneTimeRunner = new();
+    private static readonly OneTimeRunner OneTimeRunner = new OneTimeRunner();
 
     public static void Configure()
     {
@@ -54,7 +57,7 @@ public static class OpenFoodFactServiceModuleExtensionConfigurator
                               //validation rules
                               property.Attributes.Add(new RequiredAttribute());
                               property.Attributes.Add(new StringLengthAttribute(64) {MinimumLength = 4});
-
+                              
                               property.Configuration[IdentityModuleExtensionConsts.ConfigurationNames.AllowUserToEdit] = true;
 
                               //...other configurations for this property

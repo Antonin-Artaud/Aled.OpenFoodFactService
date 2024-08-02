@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Aled.OpenFoodFactService.Data;
 using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Driver;
+using Aled.OpenFoodFactService.Data;
 using Volo.Abp.Data;
 using Volo.Abp.DependencyInjection;
 using Volo.Abp.MongoDB;
 
-namespace Aled.OpenFoodFactService.MongoDb;
+namespace Aled.OpenFoodFactService.MongoDB;
 
 public class MongoDbOpenFoodFactServiceDbSchemaMigrator : IOpenFoodFactServiceDbSchemaMigrator, ITransientDependency
 {
