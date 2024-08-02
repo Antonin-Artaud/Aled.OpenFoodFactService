@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Aled.OpenFoodFactService.BackgroundServices;
 using Aled.OpenFoodFactService.MongoDB;
 using Aled.OpenFoodFactService.MultiTenancy;
 using Hangfire;
@@ -24,7 +23,6 @@ using Volo.Abp.AspNetCore.Mvc;
 using Volo.Abp.AspNetCore.Mvc.UI.MultiTenancy;
 using Volo.Abp.AspNetCore.Serilog;
 using Volo.Abp.Autofac;
-using Volo.Abp.BackgroundJobs.Hangfire;
 using Volo.Abp.Caching;
 using Volo.Abp.Caching.StackExchangeRedis;
 using Volo.Abp.DistributedLocking;
@@ -44,8 +42,7 @@ namespace Aled.OpenFoodFactService;
     typeof(OpenFoodFactServiceApplicationModule),
     typeof(OpenFoodFactServiceMongoDbModule),
     typeof(AbpAspNetCoreSerilogModule),
-    typeof(AbpSwashbuckleModule),
-    typeof(AbpBackgroundJobsHangfireModule)
+    typeof(AbpSwashbuckleModule)
 )]
 public class OpenFoodFactServiceHttpApiHostModule : AbpModule
 {
@@ -238,17 +235,6 @@ public class OpenFoodFactServiceHttpApiHostModule : AbpModule
         app.UseHealthChecks("/health");
         app.UseAuditing();
         app.UseAbpSerilogEnrichers();
-        app.UseHangfireDashboard();
         app.UseConfiguredEndpoints();
-
-        InitializeRecurringJobs();
-    }
-
-    private static void InitializeRecurringJobs()
-    {
-        RecurringJob.AddOrUpdate<IUpdatingDatabaseManager>(
-            "Updating OpenFoodFact data",
-            manager => manager.UpdateDatabaseAsync(DateTime.Now),
-            Cron.Daily);
     }
 }
