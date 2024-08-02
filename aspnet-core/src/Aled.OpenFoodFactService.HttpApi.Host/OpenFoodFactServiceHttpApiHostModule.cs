@@ -129,7 +129,6 @@ public class OpenFoodFactServiceHttpApiHostModule : AbpModule
                 options.Audience = "Aled";
             });
 
-
         context.Services.Configure<AbpClaimsPrincipalFactoryOptions>(options =>
         {
             options.IsDynamicClaimsEnabled = true;
