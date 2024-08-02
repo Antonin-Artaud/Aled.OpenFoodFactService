@@ -22,9 +22,9 @@ public class UpdatingDatabaseJob : AsyncBackgroundJob<UpdatingDatabaseJobArgs>, 
     public override async Task ExecuteAsync(UpdatingDatabaseJobArgs args)
     {
         _logger.LogInformation("Updating database started at {DateTime}", args.StartDate);
-        
+
         await _updatingDatabaseService.UpdateDatabaseAsync();
-        
+
         _logger.LogInformation("Updating database completed at {DateTime}", DateTime.Now);
     }
 }

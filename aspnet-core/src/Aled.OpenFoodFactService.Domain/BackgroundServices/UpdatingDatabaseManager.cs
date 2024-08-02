@@ -13,7 +13,7 @@ public class UpdatingDatabaseManager(IBackgroundJobManager backgroundJobManager)
         {
             StartDate = startDate
         };
-        
+
         await backgroundJobManager.EnqueueAsync(args);
     }
 }

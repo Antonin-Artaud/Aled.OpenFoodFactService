@@ -46,12 +46,14 @@ internal class Program
 
                     if (string.IsNullOrEmpty(openIddictAppRootUrl))
                     {
-                        throw new Exception($"ConfigurationError: an error occured on API_HOST_URL env key. Ensure the .env file is correctly configured and placed in the root directory.");
+                        throw new Exception(
+                            "ConfigurationError: an error occured on API_HOST_URL env key. Ensure the .env file is correctly configured and placed in the root directory.");
                     }
-                    
-                    hostContext.Configuration["OpenIddict:Applications:OpenFoodFactService_Swagger:RootUrl"] = openIddictAppRootUrl;
+
+                    hostContext.Configuration["OpenIddict:Applications:OpenFoodFactService_Swagger:RootUrl"] =
+                        openIddictAppRootUrl;
                 }
-                
+
                 services.AddHostedService<DbMigratorHostedService>();
             });
     }

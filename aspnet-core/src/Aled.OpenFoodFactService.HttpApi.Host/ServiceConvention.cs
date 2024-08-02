@@ -17,9 +17,10 @@ public class ServiceConvention(
 {
     protected override void ApplyForControllers(ApplicationModel application)
     {
-        application.Controllers.RemoveAll(s => s.ControllerType != typeof(AbpApiDefinitionController) 
-                                               && s.ControllerType.Namespace?.StartsWith("Aled.OpenFoodFactService") == false);
-        
+        application.Controllers.RemoveAll(s => s.ControllerType != typeof(AbpApiDefinitionController)
+                                               && s.ControllerType.Namespace?.StartsWith("Aled.OpenFoodFactService") ==
+                                               false);
+
         base.ApplyForControllers(application);
     }
 }

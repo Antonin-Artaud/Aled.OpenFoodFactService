@@ -2,11 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
 using Aled.OpenFoodFactService.BackgroundServices;
-using Aled.OpenFoodFactService.MongoDb;
+using Aled.OpenFoodFactService.MongoDB;
 using Aled.OpenFoodFactService.MultiTenancy;
 using Hangfire;
 using Medallion.Threading;
@@ -19,7 +16,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using StackExchange.Redis;
 using Volo.Abp;
@@ -73,12 +69,9 @@ public class OpenFoodFactServiceHttpApiHostModule : AbpModule
 
     private void ConfigureHangfireAuditing()
     {
-        Configure<AbpAspNetCoreAuditingOptions>(options =>
-        {
-            options.IgnoredUrls.Add("/hangfire/stats");
-        });
+        Configure<AbpAspNetCoreAuditingOptions>(options => { options.IgnoredUrls.Add("/hangfire/stats"); });
     }
-    
+
     private void ConfigureHangfire(ServiceConfigurationContext context, IConfiguration configuration)
     {
         context.Services.AddHangfire(config =>
@@ -247,10 +240,10 @@ public class OpenFoodFactServiceHttpApiHostModule : AbpModule
         app.UseAbpSerilogEnrichers();
         app.UseHangfireDashboard();
         app.UseConfiguredEndpoints();
-        
+
         InitializeRecurringJobs();
     }
-    
+
     private static void InitializeRecurringJobs()
     {
         RecurringJob.AddOrUpdate<IUpdatingDatabaseManager>(
