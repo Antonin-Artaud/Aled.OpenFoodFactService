@@ -1,12 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-    <Import Project="..\..\common.props"/>
+  <Import Project="..\..\common.props" />
 
-    <PropertyGroup>
-        <TargetFramework>net8.0</TargetFramework>
-        <Nullable>enable</Nullable>
-        <RootNamespace>Aled.OpenFoodFactService</RootNamespace>
-    </PropertyGroup>
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <RootNamespace>Aled.OpenFoodFactService</RootNamespace>
+  </PropertyGroup>
 
     <ItemGroup>
         <ProjectReference Include="..\Aled.OpenFoodFactService.Domain\Aled.OpenFoodFactService.Domain.csproj"/>

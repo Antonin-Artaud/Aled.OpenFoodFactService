@@ -1,7 +1,5 @@
-﻿using Aled.OpenFoodFactService.MultiTenancy;
-using Volo.Abp.Localization;
+﻿using Volo.Abp.Localization;
 using Volo.Abp.Modularity;
-using Volo.Abp.MultiTenancy;
 
 namespace Aled.OpenFoodFactService;
 
@@ -16,7 +14,5 @@ public class OpenFoodFactServiceDomainModule : AbpModule
         {
             options.Languages.Add(new LanguageInfo("en", "en", "English"));
         });
-
-        Configure<AbpMultiTenancyOptions>(options => { options.IsEnabled = MultiTenancyConsts.IsEnabled; });
     }
 }

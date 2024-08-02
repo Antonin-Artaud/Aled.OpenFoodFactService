@@ -11,7 +11,7 @@ namespace Aled.OpenFoodFactService.DbMigrator;
     typeof(AbpCachingStackExchangeRedisModule),
     typeof(OpenFoodFactServiceMongoDbModule),
     typeof(OpenFoodFactServiceApplicationContractsModule)
-)]
+    )]
 public class OpenFoodFactServiceDbMigratorModule : AbpModule
 {
     public override void ConfigureServices(ServiceConfigurationContext context)

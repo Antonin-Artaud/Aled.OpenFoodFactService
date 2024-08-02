@@ -12,9 +12,9 @@ using Serilog.Events;
 
 namespace Aled.OpenFoodFactService;
 
-public static class Program
+public class Program
 {
-    public static async Task<int> Main(string[] args)
+    public async static Task<int> Main(string[] args)
     {
         Log.Logger = new LoggerConfiguration()
 #if DEBUG
