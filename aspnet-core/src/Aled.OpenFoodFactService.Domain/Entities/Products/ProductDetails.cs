@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
 namespace Aled.OpenFoodFactService.Entities.Products;
@@ -17,4 +18,7 @@ public class ProductDetails
     public string Allergens { get; set; }
 
     [JsonPropertyName("image_front_url")] public string ImageFrontUrl { get; set; }
+
+    [JsonPropertyName("categories_tags")]
+    public List<string> CategoryTags { get; set; }
 }
