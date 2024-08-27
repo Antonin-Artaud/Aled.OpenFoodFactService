@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Aled.OpenFoodFactService.Entities.Products;
 using Volo.Abp.Data;
@@ -39,7 +40,8 @@ public class OpenFoodFactServiceDataSeedContributor : IDataSeedContributor, ITra
                             "carbonated water, sugar, colour (caramel e150), acid (phosphoric acid), natural flavourings (including caffeine)",
                         Allergens = "None",
                         ImageFrontUrl =
-                            "https://images.openfoodfacts.org/images/products/544/900/000/0439/front_en.292.400.jpg"
+                            "https://images.openfoodfacts.org/images/products/544/900/000/0439/front_en.292.400.jpg",
+                        CategoryTags = []
                     }
                 },
                 true
