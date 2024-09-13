@@ -16,4 +16,18 @@ public class ProductDetailsDto : EntityDto
     public string ImageFrontUrl { get; set; } = string.Empty;
     
     public List<string> CategoryTags { get; set; } = [];
+    
+    public string IngredientsOrigins { get; set; } = string.Empty;
+    
+    public string Manufacturing { get; set; } = string.Empty;
+    
+    public string Packaging { get; set; } = string.Empty;
+    
+    public int NovaGroup { get; set; }
+    
+    public NutrientLevelsDto NutriscoreGrade { get; set; }
+    
+    public NutrimentsDto Nutriments { get; set; }
+    
+    public VitaminsDto Vitamins { get; set; }
 }

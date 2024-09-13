@@ -5,11 +5,14 @@ namespace Aled.OpenFoodFactService.Entities.Products;
 
 public class ProductDetails
 {
-    [JsonPropertyName("_id")] public string Id { get; set; }
+    [JsonPropertyName("_id")]
+    public string Id { get; set; }
 
-    [JsonPropertyName("product_name")] public string ProductName { get; set; }
+    [JsonPropertyName("product_name")] 
+    public string ProductName { get; set; }
 
-    [JsonPropertyName("brands")] public string Brands { get; set; }
+    [JsonPropertyName("brands")] 
+    public string Brands { get; set; }
 
     [JsonPropertyName("ingredients_text_fr")]
     public string IngredientsText { get; set; }
@@ -21,4 +24,29 @@ public class ProductDetails
 
     [JsonPropertyName("categories_tags")]
     public List<string> CategoryTags { get; set; }
+    
+    [JsonPropertyName("ingredientsOrigins")]
+    public string IngredientsOrigins { get; set; }
+    
+    [JsonPropertyName("manufacturing")]
+    public string Manufacturing { get; set; }
+    
+    [JsonPropertyName("packaging")]
+    public string Packaging { get; set; }
+    
+    //nova_group
+    [JsonPropertyName("nova_group")]
+    public int NovaGroup { get; set; }
+    
+    //nutriscore_levels
+    [JsonPropertyName("nutrient_levels")]
+    public NutrientLevels NutriscoreGrade { get; set; }
+    
+    //nutriments
+    [JsonPropertyName("nutriments")]
+    public Nutriments Nutriments { get; set; }
+    
+    //vitamins
+    [JsonPropertyName("vitamins")]
+    public Vitamins Vitamins { get; set; }
 }
