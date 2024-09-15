@@ -2,7 +2,7 @@ using System.Text.Json.Serialization;
 
 namespace Aled.OpenFoodFactService.Entities.Products;
 
-public class Nutriments
+public class Nutrients
 {
     [JsonPropertyName("calcium_100g")]
     public double Calcium { get; set; }
@@ -33,4 +33,19 @@ public class Nutriments
     
     [JsonPropertyName("salt_100g")]
     public double Salt { get; set; }
+
+    [JsonPropertyName("vitamin-b1_value")]
+    public double B1 { get; set; }
+    
+    [JsonPropertyName("vitamin-b2_value")]
+    public double B2 { get; set; }
+    
+    [JsonPropertyName("vitamin-b6_value")]
+    public double B6 { get; set; }
+    
+    [JsonPropertyName("vitamin-b12_value")]
+    public double B12 { get; set; }
+
+    [JsonPropertyName("vitamin-c_value")]
+    public double C { get; set; }
 }
