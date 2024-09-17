@@ -11,7 +11,7 @@ public class OpenFoodFactServiceApplicationAutoMapperProfile : Profile
         CreateMap<Product, ProductDto>();
         CreateMap<ProductDetails, ProductDetailsDto>();
         CreateMap<NutrientLevels, NutrientLevelsDto>();
-        CreateMap<Nutriments, NutrimentsDto>();
+        CreateMap<Nutrients, NutrientsDto>();
         CreateMap<Vitamins, VitaminsDto>();
     }
 }

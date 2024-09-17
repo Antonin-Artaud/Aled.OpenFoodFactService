@@ -9,4 +9,6 @@ public class VitaminsDto
     public double B6 { get; set; }
     
     public double B12 { get; set; }
+
+    public double C {  get; set; }
 }

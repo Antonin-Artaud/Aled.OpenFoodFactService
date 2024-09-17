@@ -20,33 +20,42 @@ public class ProductDetails
     [JsonPropertyName("ingredients_text_with_allergens_fr")]
     public string Allergens { get; set; }
 
-    [JsonPropertyName("image_front_url")] public string ImageFrontUrl { get; set; }
+    [JsonPropertyName("image_front_url")]
+    public string ImageFrontUrl { get; set; }
 
     [JsonPropertyName("categories_tags")]
     public List<string> CategoryTags { get; set; }
     
-    [JsonPropertyName("ingredientsOrigins")]
+    [JsonPropertyName("origins")]
     public string IngredientsOrigins { get; set; }
     
-    [JsonPropertyName("manufacturing")]
+    [JsonPropertyName("manufacturing_places")]
     public string Manufacturing { get; set; }
     
     [JsonPropertyName("packaging")]
     public string Packaging { get; set; }
-    
+
+    [JsonPropertyName("product_quantity")]
+    public string Quantity { get; set; }
+
     //nova_group
     [JsonPropertyName("nova_group")]
     public int NovaGroup { get; set; }
     
-    //nutriscore_levels
+    //nutrient
     [JsonPropertyName("nutrient_levels")]
-    public NutrientLevels NutriscoreGrade { get; set; }
-    
+    public NutrientLevels NutrientLevels{ get; set; }
+
+    //nutriscore
+    [JsonPropertyName("nutriscore_grade")]
+    public string Nutriscore { get; set; }
+
     //nutriments
     [JsonPropertyName("nutriments")]
-    public Nutriments Nutriments { get; set; }
+    public Nutrients Nutrients { get; set; }
     
     //vitamins
     [JsonPropertyName("vitamins")]
     public Vitamins Vitamins { get; set; }
+
 }
