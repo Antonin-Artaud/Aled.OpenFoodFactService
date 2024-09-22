@@ -32,18 +32,4 @@ public class ProductDetailsDto : EntityDto
     public string Nutriscore { get; set; }
 
     public NutrientsDto Nutrients { get; set; }
-    
-    public VitaminsDto Vitamins { get; set; }
-
-    public VitaminsDto GetVitamins()
-    {
-        return new VitaminsDto
-        {
-            B1 = Nutrients.B1,
-            B2 = Nutrients.B2,
-            B6 = Nutrients.B6,
-            B12 = Nutrients.B12,
-            C = Nutrients.C,
-        };
-    }
 }
