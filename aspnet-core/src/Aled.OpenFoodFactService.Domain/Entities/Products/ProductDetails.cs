@@ -53,9 +53,4 @@ public class ProductDetails
     //nutriments
     [JsonPropertyName("nutriments")]
     public Nutrients Nutrients { get; set; }
-    
-    //vitamins
-    [JsonPropertyName("vitamins")]
-    public Vitamins Vitamins { get; set; }
-
 }

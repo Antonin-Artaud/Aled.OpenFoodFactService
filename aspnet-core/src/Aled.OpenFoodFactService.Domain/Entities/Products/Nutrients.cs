@@ -48,4 +48,7 @@ public class Nutrients
 
     [JsonPropertyName("vitamin-c_value")]
     public double C { get; set; }
+
+    [JsonPropertyName("vitamin-d_value")]
+    public double D { get; set; }
 }
